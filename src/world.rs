@@ -1,4 +1,4 @@
-use crate::{HitRecord, Ray, Hittable};
+use crate::{HitRecord, Hittable, Ray};
 
 #[derive(Default)]
 pub struct World<H: Hittable> {
@@ -6,7 +6,8 @@ pub struct World<H: Hittable> {
 }
 
 impl<H> World<H>
-    where H: Hittable
+where
+    H: Hittable,
 {
     pub fn add(&mut self, obj: H) {
         self.objects.push(obj);
@@ -14,7 +15,8 @@ impl<H> World<H>
 }
 
 impl<H> Hittable for World<H>
-    where H: Hittable
+where
+    H: Hittable,
 {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool {
         let mut hit = false;

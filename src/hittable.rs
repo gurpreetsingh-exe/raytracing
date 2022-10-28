@@ -1,5 +1,5 @@
-use glm::{Vec3, vec3};
 use crate::ray::Ray;
+use glm::{vec3, Vec3};
 
 #[derive(Debug)]
 pub struct HitRecord {
@@ -10,7 +10,11 @@ pub struct HitRecord {
 
 impl Default for HitRecord {
     fn default() -> Self {
-        Self { pos: vec3(0.0, 0.0, 0.0), normal: vec3(0.0, 0.0, 0.0), t: 0.0 }
+        Self {
+            pos: vec3(0.0, 0.0, 0.0),
+            normal: vec3(0.0, 0.0, 0.0),
+            t: 0.0,
+        }
     }
 }
 

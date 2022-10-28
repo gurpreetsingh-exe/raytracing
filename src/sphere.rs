@@ -1,14 +1,17 @@
+use crate::{HitRecord, Hittable, Ray};
 use glm::*;
-use crate::{HitRecord, Ray, Hittable};
 
 pub struct Sphere {
     center: Vec3,
-    radius: f32
+    radius: f32,
 }
 
 impl Default for Sphere {
     fn default() -> Self {
-        Self { center: vec3(0.0, 0.0, 0.0), radius: 0.5 }
+        Self {
+            center: vec3(0.0, 0.0, 0.0),
+            radius: 0.5,
+        }
     }
 }
 
