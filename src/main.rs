@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod hittable;
 pub mod ray;
 pub mod sphere;
@@ -7,6 +8,7 @@ pub mod world;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
+use camera::Camera;
 use glm::{clamp, normalize, vec3, Vec3};
 use hittable::{HitRecord, Hittable};
 use ray::Ray;
@@ -58,12 +60,9 @@ fn main() {
     let viewport_height = 2.0;
     let viewport_width = ASPECT_RATIO * viewport_height;
     let focal_length = 1.0;
-
     let origin = vec3(0.0, 0.0, 0.0);
-    let horizontal = vec3(viewport_width, 0.0, 0.0);
-    let vertical = vec3(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal * 0.5 - vertical * 0.5 - vec3(0.0, 0.0, focal_length);
+
+    let camera = Camera::new(focal_length, origin, viewport_width, viewport_height);
 
     let mut world = World::<Sphere>::default();
     world.add(Sphere::new(vec3(0.0, 0.0, -1.0), 0.5));
@@ -83,10 +82,7 @@ fn main() {
             for _ in 0..samples {
                 let u = (i as f32 + rand_float()) / (WIDTH - 1) as f32;
                 let v = ((HEIGHT - j - 1) as f32 + rand_float()) / (HEIGHT - 1) as f32;
-                let ray = Ray::new(
-                    origin,
-                    lower_left_corner + horizontal * u + vertical * v - origin,
-                );
+                let ray = camera.get_ray(u, v);
                 pixel_color = pixel_color + ray_color(&ray, &world);
             }
             write_color(&mut data, pixel_color, samples);
