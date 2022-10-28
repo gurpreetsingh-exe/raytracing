@@ -221,6 +221,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c33a3c44ca05fa6f1807d8e6743f3824e8509beca625669633be0acbdf509dc"
 
 [[package]]
+name = "raytracing"
+version = "0.1.0"
+dependencies = [
+ "glm",
+]
+
+[[package]]
 name = "rdrand"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -247,13 +254,6 @@ name = "regex-syntax"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9ec002c35e86791825ed294b50008eea9ddfc8def4420124fbc6b08db834957"
-
-[[package]]
-name = "rt_in_one_weekend"
-version = "0.1.0"
-dependencies = [
- "glm",
-]
 
 [[package]]
 name = "rustc-serialize"
