@@ -9,11 +9,11 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 
 use camera::Camera;
-use glm::{clamp, normalize, vec3, Vec3};
+use glm::{clamp, normalize, sqrt, vec3, Vec3};
 use hittable::{HitRecord, Hittable};
 use ray::Ray;
 use sphere::Sphere;
-use utils::rand_float;
+use utils::{rand_float, random_in_hemisphere};
 use world::World;
 
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -27,7 +27,7 @@ static mut SEED: u64 = 0;
 fn write_color(buf: &mut Vec<u8>, color: Vec3, samples: u8) {
     let scale = 1.0 / samples as f32;
     let p_color = clamp(
-        color * scale,
+        sqrt(color * scale),
         vec3(0.0, 0.0, 0.0),
         vec3(0.999, 0.999, 0.999),
     );
@@ -43,10 +43,19 @@ fn write_color(buf: &mut Vec<u8>, color: Vec3, samples: u8) {
     )
 }
 
-fn ray_color<H: Hittable>(ray: &Ray, world: &World<H>) -> Vec3 {
+fn ray_color<H: Hittable>(ray: &Ray, world: &World<H>, depth: i32) -> Vec3 {
     let mut hit_rec = HitRecord::default();
-    if world.hit(ray, 0.0, f32::INFINITY, &mut hit_rec) {
-        (hit_rec.normal + vec3(1.0, 1.0, 1.0)) * 0.5
+    if depth <= 0 {
+        return vec3(0.0, 0.0, 0.0);
+    }
+
+    if world.hit(ray, 0.001, f32::INFINITY, &mut hit_rec) {
+        let target = hit_rec.pos + random_in_hemisphere(&hit_rec.normal);
+        ray_color(
+            &Ray::new(hit_rec.pos, target - hit_rec.pos),
+            world,
+            depth - 1,
+        ) * 0.5
     } else {
         let unit_direction = normalize(ray.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -83,7 +92,7 @@ fn main() {
                 let u = (i as f32 + rand_float()) / (WIDTH - 1) as f32;
                 let v = ((HEIGHT - j - 1) as f32 + rand_float()) / (HEIGHT - 1) as f32;
                 let ray = camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(&ray, &world);
+                pixel_color = pixel_color + ray_color(&ray, &world, 4);
             }
             write_color(&mut data, pixel_color, samples);
         }
